@@ -1,4 +1,5 @@
 #### read libraries ####
+#install.packages(c("here", "harmony", "Seurat", "SeuratData")) add tidyverse if not already installed 
 library(here)
 library(tidyverse)
 library(harmony)
