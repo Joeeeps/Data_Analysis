@@ -1,0 +1,71 @@
+#Unemployment data from [https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/timeseries/mgsx/lms/previous]
+
+#Contains unemployment data between 1971-2023 sorted by year and month. Seasonally adjusted.
+#We want to ask two questions
+#1) Is 2023 unemployment significantly different than overall unemployment?
+#2) Does unemployment vary by month. 
+
+#### read libraries ####
+library(tidyverse)
+
+#### set working directory ####
+setwd("~/OneDrive/Desktop/R/Mann-U and Wilcox")
+
+#### Start analysis ####
+unemployment <- read.csv("unemployment.csv")
+unemployment$Year <- as.character(unemployment$Year)
+glimpse(unemployment)
+
+#### Parametric or non parametric? ####
+#!) Observations are time-based, so not independent of each other. Assumption violated.
+#2) Our data is percentage data, and thus interval data. Assumption met.
+#3) Our data is is not normalised. Violates. Assumption violated.
+ggplot(unemployment, aes(x = Unemployment)) +
+  geom_histogram()
+ggsave("unemployment_histogram.png")
+
+#Is our 2023 data significantly different from the average?
+#As our data is non-parametric we cannot use a one-paired t-test to compare, so instead we will use a Mann-U Whitney/Wilcox test 
+
+mean(unemployment$Unemployment) #overall mean = 6.724165
+mean(unemployment$Unemployment[unemployment$Year == 2023]) #mean 2023 = 4
+wilcox.test(unemployment$Unemployment[unemployment$Year == 2023], mu = mean(unemployment$Unemployment)) #p - 0.03552; 2023 unemployment is significantly lower
+
+#Yes, 2023 is significantly different than overall. However, note sample size is small. 
+#We can visualise this using a column graph, the red line indicates the overall mean, while each bar is a year-on-year difference.
+
+unemployment_year <- unemployment %>% group_by(Year) %>%
+summarise(Unemployment = mean(Unemployment))
+
+ggplot(unemployment_year, aes(x = Year, y = Unemployment)) +
+geom_col() +
+geom_hline(yintercept = mean(unemployment_year$Unemployment), color = "red", linetype = "dashed", size = 1)
+ggsave("unemployment_yearly_mean.png")
+
+#When looking at data such as this however, it's important to understand the context of the data.
+#i.e. How many employed people are in zero-hour, part-time and full-time contracts?
+#i.e. What is the year-on-year cost of living, and how many people meet this?
+#i.e. Are there any significant events which may explain a spike or fall in unemployment? 
+#Understanding the broader context is required to infer context in all data.
+ 
+#2) Does unemployment data vary significantly by month?
+
+#For this we will use a Kruskal-Wallis test, the non-parametric alternative of an ANOVA
+
+unemployment_month <- unemployment %>% group_by(Month) %>%
+  summarise(Unemployment = mean(Unemployment))
+                          
+ggplot(unemployment_month, aes(x = Month, y = Unemployment)) +
+geom_col() +
+geom_hline(yintercept = mean(unemployment_year$Unemployment), color = "red", linetype = "dashed", size = 1)
+ggsave("unemployment_monthly_with_seasonal_correction.png")
+kruskal.test(Unemployment ~ Month, data = unemployment)
+
+#Strange? The P-value is almost 1... this is because the data has previously been seasonally adjusted. 
+#When working on data, always ensure you understand if it has bee nmodifiedd prior.
+#Reasons for seasonally-adjusted unemployment data may include summer jobs by students, or an increase in hiring at retail stores during christmas for example.
+#I couldn't find non-seasonal corrected data to compare monthly. 
+
+#Further note: Generally Parametric t-tests are better suited to variables such as height of a pouplation (one-sample) or height and weight correlations of population (two-sample t test)
+#Effectively they are done the same however in R, just substitute kruskal.test with t.test etc.
+
