@@ -53,7 +53,7 @@ for (i in seq_along(fastq_files)) {
   average_loop <- mean(as.numeric(tidy_loop$QS), na.rm = TRUE)
 
   percentage_count <- tidy_loop %>%
-    mutate(QS = as.numeric(QS),  # Convert 'QS' to numeric
+    mutate(QS = as.numeric(QS),  # convert 'QS' to numeric
            QS_range = case_when(
              QS >= 1 & QS <= 12 ~ "QS 1-13", #this corresponds to QS2-> 13 as QS2 becomes '1' numerical
              QS >= 13 & QS <= 22 ~ "QS 14-23", 
@@ -63,7 +63,6 @@ for (i in seq_along(fastq_files)) {
     
     summarize(Percentage = sum(Count) / sum(tidy_loop$Count) * 100)
   
-  # Create facet_wrap-style table
   ggplot(tidy_loop, aes(x = QS, y = Count, fill = qs_ranges_loop)) +
     geom_histogram(stat = "identity", position = "stack") +
     labs(title = paste(basename(fastq_files[i]), "\nAverage quality score:", round(average_loop, 3))) +
