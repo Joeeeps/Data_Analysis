@@ -1,0 +1,44 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##samtoolsVersion=1.5+htslib-1.5
+##samtoolsCommand=samtools mpileup -uf reference.fasta sorted_bams/sort_condition2sample1.bam
+##reference=file://reference.fasta
+##contig=<ID=B_HA,length=1758>
+##contig=<ID=B_MP,length=1139>
+##contig=<ID=B_NA,length=1408>
+##contig=<ID=B_NP,length=1683>
+##contig=<ID=B_NS,length=1034>
+##contig=<ID=B_PA,length=2181>
+##contig=<ID=B_PB1,length=2263>
+##contig=<ID=B_PB2,length=2313>
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=IDV,Number=1,Type=Integer,Description="Maximum number of reads supporting an indel">
+##INFO=<ID=IMF,Number=1,Type=Float,Description="Maximum fraction of reads supporting an indel">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias for filtering splice-site artefacts in RNA-seq data (bigger is better)",Version="3">
+##INFO=<ID=RPB,Number=1,Type=Float,Description="Mann-Whitney U test of Read Position Bias (bigger is better)">
+##INFO=<ID=MQB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality Bias (bigger is better)">
+##INFO=<ID=BQB,Number=1,Type=Float,Description="Mann-Whitney U test of Base Quality Bias (bigger is better)">
+##INFO=<ID=MQSB,Number=1,Type=Float,Description="Mann-Whitney U test of Mapping Quality vs Strand Bias (bigger is better)">
+##INFO=<ID=SGB,Number=1,Type=Float,Description="Segregation based metric.">
+##INFO=<ID=MQ0F,Number=1,Type=Float,Description="Fraction of MQ0 reads (smaller is better)">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##INFO=<ID=ICB,Number=1,Type=Float,Description="Inbreeding Coefficient Binomial test (bigger is better)">
+##INFO=<ID=HOB,Number=1,Type=Float,Description="Bias in the number of HOMs number (smaller is better)">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes for each ALT allele, in the same order as listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Average mapping quality">
+##bcftools_callVersion=1.5+htslib-1.5
+##bcftools_callCommand=call -mv -o sorted_bams/sort_condition2sample1.vcf; Date=Fri Jan 19 03:20:05 2024
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	sorted_bams/sort_condition2sample1.bam
+B_HA	408	.	T	C	167	.	DP=107;VDB=4.19523e-05;SGB=-0.693146;RPB=1;MQB=1;MQSB=0.998747;BQB=1;MQ0F=0;AC=2;AN=2;DP4=0,1,13,31;MQ=27	GT:PL	1/1:194,117,0
+B_MP	633	.	G	A	171	.	DP=122;VDB=0.0139849;SGB=-0.693147;MQSB=0.995153;MQ0F=0.0163934;AC=2;AN=2;DP4=0,0,30,26;MQ=26	GT:PL	1/1:201,169,0
+B_MP	634	.	C	T	187	.	DP=123;VDB=0.0501914;SGB=-0.693147;MQSB=0.997747;MQ0F=0.0162602;AC=2;AN=2;DP4=0,0,31,33;MQ=26	GT:PL	1/1:217,193,0
+B_NA	153	.	C	T	144	.	DP=88;VDB=1.65377e-10;SGB=-0.693141;MQSB=0.804694;MQ0F=0;AC=2;AN=2;DP4=0,0,7,30;MQ=26	GT:PL	1/1:174,111,0
+B_NP	687	.	G	A	206	.	DP=157;VDB=0.23184;SGB=-0.693147;MQSB=0.775401;MQ0F=0.00636943;AC=2;AN=2;DP4=0,0,26,36;MQ=29	GT:PL	1/1:236,187,0
+B_PA	1290	.	C	T	171	.	DP=138;VDB=0.995947;SGB=-0.693147;MQSB=0.92233;MQ0F=0.00724638;AC=2;AN=2;DP4=0,0,46,24;MQ=26	GT:PL	1/1:201,208,0
+B_PB1	1893	.	G	A	176	.	DP=111;VDB=0.0289219;SGB=-0.693147;MQSB=0.280704;MQ0F=0;AC=2;AN=2;DP4=0,0,41,14;MQ=27	GT:PL	1/1:206,163,0
+B_PB2	1101	.	A	G	183	.	DP=131;VDB=0.675797;SGB=-0.693147;RPB=1;MQB=1;MQSB=0.983416;BQB=1;MQ0F=0;AC=2;AN=2;DP4=1,0,39,33;MQ=28	GT:PL	1/1:210,201,0
