@@ -1,0 +1,19 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##contig=<ID=NC_000962.3,length=4411532>
+##contig=<ID=B_PB2,length=1000000>
+##contig=<ID=B_PB1,length=1000000>
+##contig=<ID=B_PA,length=1000000>
+##contig=<ID=B_NP,length=1000000>
+##contig=<ID=B_NA,length=1000000>
+##contig=<ID=B_MP,length=1000000>
+##contig=<ID=B_HA,length=1000000>
+##INFO=<ID=Drugs,Number=1,Type=String,Description="AMR drugs">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##bcftools_isecVersion=1.5+htslib-1.5
+##bcftools_isecCommand=isec -n=2 -p comparison_folder/condition2_sample3 sorted_bams/sort_condition2_sample3.vcf.gz ../true_positives.vcf.gz; Date=Fri Jan 19 04:01:34 2024
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	Sample1
+B_HA	408	.	T	C	.	.	.	.	.
+B_NA	153	.	C	T	.	.	.	.	.
+B_NP	687	.	G	A	.	.	.	.	.
