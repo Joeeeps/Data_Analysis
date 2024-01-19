@@ -1,0 +1,95 @@
+Comparing true_positives (vcf) with genes from each study.
+
+Step 1- Bowtie2 alignment
+
+reference genes are located in the /reference/ folder
+bowtie2-build reference.fasta reference_index 
+
+Step 2- Align each sample to the reference 
+
+#!/bin/bash
+
+reference_index=$(pwd)
+
+# align each fastq file to reference
+for i in {0..4}; do
+bowtie2 -x reference_index -U ../test_data/condition1/fastqs/*/condition1_sample${i}_merged.fastq -S condition1sample${i}.sam
+    for i in {0..4}; do
+    bowtie2 -x reference_index -U ../test_data/condition2/fastqs/*/condition2_sample${i}_merged.fastq -S condition2sample${i}.sam
+    done 
+done
+ ####### This loop searches for every fastq fle 
+
+Step3- Convert SAM files to BAM files 
+
+# convert sam to bam
+for i in *.sam; do
+    if [ -e "$i" ]; then
+        bam_file="${i%.sam}.bam"
+        echo "Converting: $i to $bam_file"
+        samtools view -bS "$i" > "$bam_file"
+    else
+        echo "File not found: $i"
+    fi
+done
+
+file sizes lower across condition 1 samples, as expected as sequence shorter
+
+Step 4 - sort bams 
+
+#!/bin/bash
+
+# directory to store sorted BAMs
+
+mkdir -p sorted_bams
+
+# do for all BAM files in current directory (references)
+for bam_file in *.bam; do
+    if [ -e "$bam_file" ]; then
+        #get filename without .bam
+        filename="${bam_file%.bam}"
+
+        #sort, then save into new directory
+        samtools sort -o "sorted_bams/sort_$filename.bam" "$bam_file"
+
+        echo "Sorted: $bam_file"
+    else
+        echo "File not found: $bam_file"
+    fi
+done
+
+step 5 - convert bam to vcf
+#!/bin/bash
+
+
+for vcf_file in sorted_bams/*.vcf.gz; do
+    if [ -e "$vcf_file" ]; then
+        # Extract the filename without the extension
+        filename="${vcf_file%.vcf}"
+
+        # Create a directory matching the filename
+        mkdir -p "vcf_comparison_results/$filename"
+
+        # Run bcftools isec and move the results to the corresponding directory
+        bcftools isec -n=2 -p "vcf_comparison_results/$filename" "$vcf_file" ../true_positives.vcf.gz
+
+        echo "Processed: $vcf_file"
+    else
+        echo "File not found: $vcf_file"
+    fi
+done
+
+step 5.5 - Compress new vcf files with bgzip and index with tabix
+
+bgzip *.vcf (repeat till all samples done)
+
+tabix -p vcf <filename>.vcf.gz
+ 
+Step 6 - compare true positives
+
+bcftools isec -n=2 -p comparison_folder/condition1_sample1 sorted_bams/sort_condition1sample1.vcf.gz ../true_positives.vcf.gz
+
+repeat for every group 
+
+
+
