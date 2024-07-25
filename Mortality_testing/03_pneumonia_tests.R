@@ -65,3 +65,4 @@ Green dashed lines = PMR 100") +
 ggsave(paste0(DIR_FIG_OUT,"PMR_by_job_group.png"), width = 16, height = 9)
 
 #Note, the CI having such a drastic range is (probably) caused by low samples size
+ 

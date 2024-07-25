@@ -42,7 +42,7 @@ summary(anova_result_SMR)
 
 
 #Make table
-ggplot(SMR_data, aes(x = Age_group, y = Deaths_per_thousand, fill = Occupation)) +
+SMR_plot <- ggplot(SMR_data, aes(x = Age_group, y = Deaths_per_thousand, fill = Occupation)) +
   geom_col(position = "dodge") +  # Use geom_col() for dodged bar chart
   labs(x = "Age Group", y = "Deaths per Thousand", title = "Males in 'Occupation A' die at an average rate\
 ANOVA: P = 0.76\
@@ -85,7 +85,7 @@ summary(ancova_result_PMR)  #adding weights  makes it significant
 #Step 2: Plot PMR of disease_X for Occupation_A
 PMR_Occupation_A <- PMR_data_modified[PMR_data_modified$Occupation == 'Occupation_A', ]
 
-ggplot(PMR_Occupation_A, aes (y = PMR, x = Age_group)) +
+PMR_plot <- ggplot(PMR_Occupation_A, aes (y = PMR, x = Age_group)) +
   geom_col(position = "dodge", fill = 'darkgreen')+
   geom_hline(yintercept = 100, linetype = "dashed", color = "red", size = 1) +
   geom_text(aes(label = round(Deaths)),
@@ -111,4 +111,55 @@ summary(model)
 plot(model, which = 1, add.smooth = FALSE)
 plot(model, which = 2, add.smooth = FALSE)
 plot(model, which = 3, add.smooth = FALSE)
+
+#Testing Poisson regression
+#Min 0, max unbounded
+#Main parameter lambda, the average no. occurences per unit of time or space
+#λi = Average number of motorcycle deaths in a year for state i
+#Poisson requires assumptions 
+
+#1) Poisson response (response variable = count per unit of time or space) - yes
+#2) Independance (observations independant of each other) - yes
+#3) Mean = variance (mean of a Poisson random variable must equal its variance)
+# Checking mean and variance of Deaths
+mean_deaths <- mean(PMR_data_modified$Observed_deaths_from_X)
+var_deaths <- var(PMR_data_modified$Observed_deaths_from_X)
+
+cat("Mean of Deaths:", mean_deaths, "\n")
+cat("Variance of Deaths:", var_deaths, "\n")
+if(var_deaths > mean_deaths) {
+  cat("Overdispersion detected. Consider using a quasi-Poisson or negative binomial model.\n")
+} else {
+  cat("No overdispersion detected. Poisson model can be used.\n")
+}
+#4) Linearity (the log of the mean rate, (log(λ) must be a linear function of x. 
+#Non-linear?
+
+# If overdispersion was detected, fit a quasi-Poisson model
+quasi_poisson_model <- glm(Observed_deaths_from_X ~ Age_group + Occupation, family = quasipoisson(), data = PMR_data_modified)
+
+# Summary of the quasi-Poisson model
+summary(quasi_poisson_model)
+
+
+#no population data, but in theory this would offset the population (note population is extremely important data for these standardisations, i just lack it)
+# Assuming 'Population_at_risk' is a column in PMR_data_modified
+#poisson_model_with_offset <- glm(Observed_deaths_from_X ~ Age_group + Occupation + offset(log(Population_at_risk)), family = poisson(), data = PMR_data_modified)
+
+# Summary of the model with offset
+#summary(poisson_model_with_offset)
+
+#testing interactive graphs
+library(plotly)
+
+PMR_plot_interactive <- ggplot(PMR_Occupation_A, aes (y = PMR, x = Age_group, extra_hover_name = Deaths)) +
+  geom_col(position = "dodge", fill = 'darkgreen')+
+  geom_hline(yintercept = 100, linetype = "dashed", color = "red", size = 1) +
+  labs(x = "Ages", y = "Proportional Mortality Rate from\
+Disease_X in Ocucpation A", title = "PMR from Disease_X is significantly higher in Occupation_A") +
+  theme_bw() 
+ggsave(paste0(DIR_FIG_OUT,"PMR_disease_X_interactive.png"), width = 16, height = 9)
+
+ggplotly(PMR_plot_interactive)
+#graph only interactive in R, not when saved as a graph, may be possible to save as html
 
